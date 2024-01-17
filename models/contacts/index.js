@@ -28,15 +28,24 @@ export async function removeContact(contactId) {
   return newListContacts;
 }
 
-export async function addContact(name, email, phone) {
+export async function addContact(data) {
   const allContacts = await listContacts();
   const newContact = {
     id: nanoid(),
-    name: name,
-    email: email,
-    phone: phone,
+    ...data,
   };
   allContacts.push(newContact);
   await updateListContacts(allContacts);
   return newContact;
+}
+
+export async function updateContact(contactId, body) {
+  const allContacts = await listContacts();
+  const index = allContacts.findIndex((item) => item.id === contactId);
+  if (index === -1) {
+    return null;
+  }
+  allContacts[index] = { ...allContacts[index], ...body };
+  await updateListContacts(allContacts);
+  return allContacts[index];
 }
