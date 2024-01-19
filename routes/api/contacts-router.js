@@ -15,6 +15,14 @@ contactsRouter.post('/', isEmptyBody, validateBody(contactAddSchema), contactsCo
 
 contactsRouter.delete('/:contactId', isValidId, contactsControllers.deleteContact);
 
-contactsRouter.put('/:contactId', isEmptyBody, validateBody(contactUpdateSchema), isValidId, contactsControllers.updateContact)
+contactsRouter.put('/:contactId', isEmptyBody, validateBody(contactUpdateSchema), isValidId, contactsControllers.updateContact);
+
+contactsRouter.patch(
+    "/:contactId/favorite",
+    isValidId,
+    isEmptyBody,
+    validateBody(contactUpdateFavoriteSchema),
+    contactsControllers.updateContact
+  );
 
 export default contactsRouter;

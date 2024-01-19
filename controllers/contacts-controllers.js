@@ -43,6 +43,7 @@ const updateContact = async (req, res, next) => {
   res.json(result);
 };
 
+
 export default {
   getAll: ctrlWrapper(getAll),
   getById: ctrlWrapper(getById),
