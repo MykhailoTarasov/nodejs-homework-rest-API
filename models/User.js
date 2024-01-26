@@ -34,22 +34,23 @@ userSchema.post("save", handleSaveError);
 userSchema.pre("findOneAndUpdate", handleUpdateReturnData);
 userSchema.post("findOneAndUpdate", handleSaveError);
 
-export const userSignupSchema = Joi.object({
-    username: Joi.string().required(),
-    email: Joi.string().pattern(emailRegexp).required(),
-    password: Joi.string().min(6).required(),
-})
+export const userRegisterSchema = Joi.object({
+  password: Joi.string().required(),
+  email: Joi.string().pattern(emailRegexp).required(),
+  subscription: Joi.string().valid(...subscriptionList),
+  token: Joi.string(),
+});
 
-export const userSigninSchema = Joi.object({
-    email: Joi.string().pattern(emailRegexp).required(),
-    password: Joi.string().min(6).required(),
-})
+export const userLoginSchema = Joi.object({
+  password: Joi.string().required(),
+  email: Joi.string().pattern(emailRegexp).required(),
+});
 
 export const updateSubscriptionSchema = Joi.object({
-    subscription: Joi.string()
-      .valid(...subscriptionList)
-      .required(),
-  });
+  subscription: Joi.string()
+    .valid(...subscriptionList)
+    .required(),
+});
 
 const User = model("user", userSchema);
 

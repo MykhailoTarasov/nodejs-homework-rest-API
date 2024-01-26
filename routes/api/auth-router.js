@@ -3,25 +3,20 @@ import authControllers from "../../controllers/auth-controllers.js";
 import { isEmptyBody, authenticate } from "../../middlewares/index.js";
 import validateBody from "../../decorators/validateBody.js";
 import {
-  userSigninSchema,
-  userSignupSchema,
+  userRegisterSchema,
+  userLoginSchema,
   updateSubscriptionSchema,
 } from "../../models/User.js";
 
 const authRouter = express.Router();
 
-authRouter.post(
-  "/signup",
-  isEmptyBody,
-  validateBody(userSignupSchema),
-  authControllers.signup
-);
+authRouter.post("/register", isEmptyBody, validateBody(userRegisterSchema), authControllers.register);
 
 authRouter.post(
-  "/signin",
+  "/login",
   isEmptyBody,
-  validateBody(userSigninSchema),
-  authControllers.signin
+  validateBody(userLoginSchema),
+  authControllers.login
 );
 
 authRouter.get("/current", authenticate, authControllers.getCurrent);
