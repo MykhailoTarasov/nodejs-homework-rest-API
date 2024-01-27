@@ -1,6 +1,10 @@
 import express from "express";
 import contactsControllers from "../../controllers/contacts-controllers.js";
-import { isEmptyBody, isValidId, authenticate } from "../../middlewares/index.js";
+import {
+  isEmptyBody,
+  isValidId,
+  authenticate,
+} from "../../middlewares/index.js";
 import validateBody from "../../decorators/validateBody.js";
 import {
   contactAddSchema,

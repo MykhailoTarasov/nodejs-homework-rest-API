@@ -1,6 +1,11 @@
+import fs from "fs/promises";
+import path from "path";
+
 import Contact from "../models/Contact.js";
 import { HttpError } from "../helpers/index.js";
 import { ctrlWrapper } from "../decorators/index.js";
+
+const avatarsPath = path.resolve("public", "avatars");
 
 const getAll = async (req, res, next) => {
   const { _id: owner } = req.user;

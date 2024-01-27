@@ -4,6 +4,12 @@ import { HttpError } from "../helpers/index.js";
 import { ctrlWrapper } from "../decorators/index.js";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
+import gravatar from "gravatar";
+import Jimp from "jimp";
+import path from "path";
+import fs from "fs/promises";
+
+const avatarPath = path.resolve("public", "avatars");
 
 const {JWT_SECRET} = process.env;
 
@@ -13,8 +19,9 @@ const register = async (req, res) => {
   if (user) {
     throw HttpError(409, "Email in use");
   }
+  const avatarURL = gravatar.url(email, { s: 250, d: "retro", r: "g" });
   const hashPassword = await bcrypt.hash(password, 10);
-  const newUser = await User.create({ ...req.body, password: hashPassword });
+  const newUser = await User.create({ ...req.body, avatarURL, password: hashPassword });
 
   res.status(201).json({
     user: {
@@ -68,10 +75,32 @@ const getCurrent = async (req, res) => {
     res.json({ email, subscription });
   };
 
+  const updateAvatar = async (req, res) => {
+    const { _id, avatarURL } = req.user;
+    const { path: tmpUpload, originalname } = req.file;
+  
+    const filename = `${_id}-${originalname}`;
+    const avatarsUpload = path.join(avatarPath, filename);
+    const newAvatarURL = path.join("avatars", filename);
+  
+    try {
+      await fs.rename(tmpUpload, avatarsUpload);
+      const avatar = await Jimp.read(avatarsUpload);
+      avatar.resize(250, 250);
+      await avatar.writeAsync(avatarsUpload);
+  
+      await User.findByIdAndUpdate(_id, { avatarURL: `${newAvatarURL}` });
+      res.json({ avatarURL: `${newAvatarURL}` });
+    } catch (error) {
+      HttpError(404, err.message);
+    }
+  };
+
 export default {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
   getCurrent: ctrlWrapper(getCurrent),
   logout: ctrlWrapper(logout),
   subscription: ctrlWrapper(subscription),
+  updateAvatar: ctrlWrapper(updateAvatar),
 };
